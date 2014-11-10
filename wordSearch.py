@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # Name:        word-finder
-# Purpose:
+# Purpose:     Make english class easier
 #
 # Author:      Rushi Shah
 #
@@ -8,16 +8,9 @@
 # Copyright:   (c) Rushi Shah 2014
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
-import re
-sentences = []
-file = ""
-lines = ""
-paragraphs = []
-chapters = []
-markers = []
-
-def delineate():
-    global file, lines, chapters, paragraphs
+def delineate(): #delineates chapters, paragraphs, and lines for quick reference
+    chapters = []
+    paragraphs = []
     file = open("sl.txt")
     lines = file.readlines()
     currParagraph = []
@@ -37,9 +30,10 @@ def delineate():
     #array cleanup
     chapters = [chapter for chapter in chapters if chapter]
     paragraphs = [paragraph for paragraph in paragraphs if paragraph]
+    return chapters #structured as chapters[chapterIndex][paragraphIndex][lineIndex] and returns line as string to be split into words as needed
 
-def findWords(targets = ['scarlet', 'letter']):
-    global markers
+def findWords(targets = ['scarlet', 'letter'], chapters = []):
+    markers = []
     for c in range(len(chapters)):
         for p in range(len(chapters[c])):
             for l in range(len(chapters[c][p])):
@@ -48,11 +42,12 @@ def findWords(targets = ['scarlet', 'letter']):
                     for target in targets:
                         if(word == target):
                             markers.append([word, c, p, l])
-    markers.sort(key = lambda marker: marker[0])
+    markers.sort(key = lambda marker: marker[0]) #sort by word, switch "marker[0]" to "marker[1]" to make it chronological by chapter
     return markers
 
 
-
-delineate()
-targets = ['steps', 'door', 'scaffold', 'gold', 'water', 'hair']
-markers = findWords(targets)
+#main function, but global for console access
+chapters = delineate()
+targets = ['steps', 'door', 'scaffold', 'gold', 'water', 'hair'] #based on keywords you want to search
+markers = findWords(targets, chapters)
+#markers is an array of list items structured as [word, chapter, paragraph, line]
